@@ -1,6 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
 import type { MatchNode, Round } from "../../types";
-import { KNOCKOUT_ROUNDS, ROUND_LABEL, resolveTeam, formatScore } from "../../layout/match";
+import {
+  KNOCKOUT_ROUNDS,
+  ROUND_LABEL,
+  resolveTeam,
+  formatScore,
+} from "../../layout/match";
 
 type Props = {
   matchesByRound: Record<Round, MatchNode[]>;
@@ -12,12 +17,27 @@ type Props = {
 function formatDate(utcDate: string): string {
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const d = new Date(utcDate);
-  const date = d.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short", timeZone });
-  const time = d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: false, timeZone });
+  const date = d.toLocaleDateString(undefined, {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    timeZone,
+  });
+  const time = d.toLocaleTimeString(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone,
+  });
   return `${date} · ${time}`;
 }
 
-export function MatchListPanel({ matchesByRound, selectedMatch, nextMatch, onSelectMatch }: Props) {
+export function MatchListPanel({
+  matchesByRound,
+  selectedMatch,
+  nextMatch,
+  onSelectMatch,
+}: Props) {
   const defaultRound = useMemo<Round>(
     () => nextMatch?.round ?? "round32",
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -35,7 +55,7 @@ export function MatchListPanel({ matchesByRound, selectedMatch, nextMatch, onSel
 
   return (
     <div
-      className="flex w-full max-h-none flex-col overflow-hidden rounded-xl border border-white/10
+      className="flex w-full max-h-none flex-col overflow-hidden md:rounded-xl rounded-t-xl border border-white/10
         bg-[#0f0f16]/95 font-sans text-white shadow-[0_8px_32px_rgba(0,0,0,0.6),0_0_0_1px_rgba(245,197,24,0.08)]
         backdrop-blur-md md:w-80 md:max-h-[80vh]"
     >
@@ -80,39 +100,47 @@ export function MatchListPanel({ matchesByRound, selectedMatch, nextMatch, onSel
                 onClick={() => onSelectMatch(isExpanded ? null : match)}
               >
                 <span className="flex w-full items-center gap-2">
-                <span className="flex min-w-0 flex-1 items-center gap-1.5">
-                  <span className="shrink-0 text-base leading-none">{home?.flagEmoji ?? ""}</span>
-                  <span
-                    className={`overflow-hidden text-[11.5px] text-ellipsis whitespace-nowrap ${
-                      winnerId === home?.id ? "font-bold text-white" : "font-medium text-white/85"
-                    }`}
-                  >
-                    {home?.name ?? "TBD"}
-                  </span>
-                </span>
-
-                <span className="w-11 shrink-0 text-center text-[11.5px] font-semibold text-white/50">
-                  {isNext ? (
-                    <span className="rounded-sm bg-[#f5c518] px-1 py-0.5 text-[9px] font-bold tracking-[0.06em] text-[#0d0d0d] uppercase">
-                      Next
+                  <span className="flex min-w-0 flex-1 items-center gap-1.5">
+                    <span className="shrink-0 text-base leading-none">
+                      {home?.flagEmoji ?? ""}
                     </span>
-                  ) : score ? (
-                    score.main
-                  ) : (
-                    "vs"
-                  )}
-                </span>
-
-                <span className="flex min-w-0 flex-1 flex-row-reverse items-center gap-1.5 text-right">
-                  <span
-                    className={`overflow-hidden text-[11.5px] text-ellipsis whitespace-nowrap ${
-                      winnerId === away?.id ? "font-bold text-white" : "font-medium text-white/85"
-                    }`}
-                  >
-                    {away?.name ?? "TBD"}
+                    <span
+                      className={`overflow-hidden text-[11.5px] text-ellipsis whitespace-nowrap ${
+                        winnerId === home?.id
+                          ? "font-bold text-white"
+                          : "font-medium text-white/85"
+                      }`}
+                    >
+                      {home?.name ?? "TBD"}
+                    </span>
                   </span>
-                  <span className="shrink-0 text-base leading-none">{away?.flagEmoji ?? ""}</span>
-                </span>
+
+                  <span className="w-11 shrink-0 text-center text-[11.5px] font-semibold text-white/50">
+                    {isNext ? (
+                      <span className="rounded-sm bg-[#f5c518] px-1 py-0.5 text-[9px] font-bold tracking-[0.06em] text-[#0d0d0d] uppercase">
+                        Next
+                      </span>
+                    ) : score ? (
+                      score.main
+                    ) : (
+                      "vs"
+                    )}
+                  </span>
+
+                  <span className="flex min-w-0 flex-1 flex-row-reverse items-center gap-1.5 text-right">
+                    <span
+                      className={`overflow-hidden text-[11.5px] text-ellipsis whitespace-nowrap ${
+                        winnerId === away?.id
+                          ? "font-bold text-white"
+                          : "font-medium text-white/85"
+                      }`}
+                    >
+                      {away?.name ?? "TBD"}
+                    </span>
+                    <span className="shrink-0 text-base leading-none">
+                      {away?.flagEmoji ?? ""}
+                    </span>
+                  </span>
                 </span>
                 {isNext && match.utcDate && (
                   <span className="mt-1 text-[10px] text-[#f5c518]/60">
@@ -126,10 +154,14 @@ export function MatchListPanel({ matchesByRound, selectedMatch, nextMatch, onSel
                   <div className="mb-2 flex items-center gap-3">
                     <div
                       className={`flex flex-1 flex-col items-center gap-1 transition-opacity ${
-                        winnerId && winnerId !== home?.id ? "opacity-45" : "opacity-100"
+                        winnerId && winnerId !== home?.id
+                          ? "opacity-45"
+                          : "opacity-100"
                       }`}
                     >
-                      <span className="text-[28px] leading-none">{home?.flagEmoji ?? ""}</span>
+                      <span className="text-[28px] leading-none">
+                        {home?.flagEmoji ?? ""}
+                      </span>
                       <span
                         className={`text-center text-[11px] tracking-[0.02em] ${
                           winnerId === home?.id
@@ -154,16 +186,22 @@ export function MatchListPanel({ matchesByRound, selectedMatch, nextMatch, onSel
                           )}
                         </>
                       ) : (
-                        <span className="text-sm font-medium text-white/30">vs</span>
+                        <span className="text-sm font-medium text-white/30">
+                          vs
+                        </span>
                       )}
                     </div>
 
                     <div
                       className={`flex flex-1 flex-col items-center gap-1 transition-opacity ${
-                        winnerId && winnerId !== away?.id ? "opacity-45" : "opacity-100"
+                        winnerId && winnerId !== away?.id
+                          ? "opacity-45"
+                          : "opacity-100"
                       }`}
                     >
-                      <span className="text-[28px] leading-none">{away?.flagEmoji ?? ""}</span>
+                      <span className="text-[28px] leading-none">
+                        {away?.flagEmoji ?? ""}
+                      </span>
                       <span
                         className={`text-center text-[11px] tracking-[0.02em] ${
                           winnerId === away?.id
@@ -176,20 +214,28 @@ export function MatchListPanel({ matchesByRound, selectedMatch, nextMatch, onSel
                     </div>
                   </div>
 
-                  {match.goals && (match.goals.home.length > 0 || match.goals.away.length > 0) && (
-                    <div className="mt-2 flex gap-2 text-[10px] text-white/50">
-                      <div className="flex flex-1 flex-col gap-0.5">
-                        {match.goals.home.map((g, i) => (
-                          <span key={i}>{g.name} <span className="text-white/30">{g.minute}'</span></span>
-                        ))}
+                  {match.goals &&
+                    (match.goals.home.length > 0 ||
+                      match.goals.away.length > 0) && (
+                      <div className="mt-2 flex gap-2 text-[10px] text-white/50">
+                        <div className="flex flex-1 flex-col gap-0.5">
+                          {match.goals.home.map((g, i) => (
+                            <span key={i}>
+                              {g.name}{" "}
+                              <span className="text-white/30">{g.minute}'</span>
+                            </span>
+                          ))}
+                        </div>
+                        <div className="flex flex-1 flex-col items-end gap-0.5 text-right">
+                          {match.goals.away.map((g, i) => (
+                            <span key={i}>
+                              <span className="text-white/30">{g.minute}'</span>{" "}
+                              {g.name}
+                            </span>
+                          ))}
+                        </div>
                       </div>
-                      <div className="flex flex-1 flex-col items-end gap-0.5 text-right">
-                        {match.goals.away.map((g, i) => (
-                          <span key={i}><span className="text-white/30">{g.minute}'</span> {g.name}</span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                    )}
 
                   {match.utcDate && (
                     <div className="mt-1 text-[10px] leading-snug text-white/35">
@@ -197,7 +243,9 @@ export function MatchListPanel({ matchesByRound, selectedMatch, nextMatch, onSel
                     </div>
                   )}
                   {match.venue && (
-                    <div className="mt-1 text-[10px] leading-snug text-white/35">{match.venue}</div>
+                    <div className="mt-1 text-[10px] leading-snug text-white/35">
+                      {match.venue}
+                    </div>
                   )}
                 </div>
               )}
