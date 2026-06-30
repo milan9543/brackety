@@ -28,9 +28,10 @@ export function Bracket({ bracket, onSelectMatch }: Props) {
 
   return (
       <svg
-        width={SVG_SIZE}
-        height={SVG_SIZE}
+        width="100%"
+        height="auto"
         viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`}
+        className="w-full max-w-225 md:w-225"
         style={{ display: "block" }}
       >
         <defs>

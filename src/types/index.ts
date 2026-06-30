@@ -25,6 +25,11 @@ export type Score = {
   awayPens?: number;
 };
 
+export type Goal = {
+  name: string;
+  minute: string;
+};
+
 export type MatchNode = {
   id: string;
   round: Round;
@@ -32,6 +37,7 @@ export type MatchNode = {
   away: MatchNode | Team;
   winner: Team | null;
   score?: Score | null;
+  goals?: { home: Goal[]; away: Goal[] };
   utcDate?: string;  // ISO 8601 kick-off time, e.g. "2026-06-28T19:00:00Z"
   venue?: string;    // stadium name, hardcoded (API returns null)
 };

@@ -8,7 +8,7 @@ A radial, interactive World Cup bracket rendered in React + SVG. Teams are posit
 - **SVG** (rendered inline, no canvas)
 - **TypeScript**
 - **Vite** (dev server + build)
-- **CSS Modules** (scoped styles per component)
+- **Tailwind CSS** (utility classes, no CSS Modules)
 - No D3, no animation libraries, no UI component libraries
 
 ## Project Structure
@@ -26,21 +26,18 @@ src/
   components/
     Bracket/
       Bracket.tsx       # Root SVG container, renders all layers
-      Bracket.module.css
-    MatchNode/
-      MatchNode.tsx     # Renders one match dot + winner badge
-      MatchNode.module.css
     TeamBadge/
       TeamBadge.tsx     # Circular badge (img or fallback initials)
-      TeamBadge.module.css
     Connector/
       Connector.tsx     # SVG <path> cubic bezier between two nodes
-      Connector.module.css
+    lines/
+      lines.tsx         # RadialLine / AxialLine — shared SVG line/arc primitives
     Trophy/
       Trophy.tsx        # Central trophy image at (CENTER_X, CENTER_Y)
     MatchListPanel/
       MatchListPanel.tsx # Side panel: round tabs + full match list per round
-      MatchListPanel.module.css
+    MatchPanel/
+      MatchPanel.tsx    # Floating detail panel for a selected match
   hooks/
     useHoveredMatch.ts  # Track which match is hovered (for highlight)
     useBracketLayout.ts # Memoized layout computation from bracket data
@@ -192,10 +189,13 @@ export async function fetchWorldCupData(): Promise<{
 - **Hover a match node** → show tooltip with matchup (home vs away)
 - **Click a match** → (optional) open a detail panel with score, date, venue
 
-Highlight state lives in `useHoveredMatch`. Connector and badge components read `isHighlighted` prop and apply a CSS class for the glow effect.
+Highlight state lives in `useHoveredMatch`. Connector and badge components read `isHighlighted` prop and apply the glow effect.
 
 ## Styling Rules
 
+- **Tailwind utility classes** for all HTML elements (panels, buttons, layout). No CSS Modules.
+- SVG elements (`<path>`, `<circle>`, `<line>`, gradients) keep their visual styling as inline attributes/props (`stroke`, `fill`, `strokeWidth`) since these are computed dynamically (highlight state, hover) and Tailwind doesn't target arbitrary SVG presentation attributes well.
+- `src/index.css` holds only the Tailwind import plus the handful of things Tailwind can't express: the `@keyframes slide-in` animation and the SVG noise-texture overlay (`.app-noise-overlay::before`).
 - Dark background: `#0d0d0d`
 - Connector default: `rgba(255,255,255,0.15)`, `strokeWidth: 1.5`
 - Connector highlighted: `rgba(255,200,50,0.8)`, `strokeWidth: 2.5`

@@ -1,4 +1,4 @@
-import type { MatchNode, Round, Score, Team } from "../types";
+import type { Goal, MatchNode, Round, Score, Team } from "../types";
 import { isTeam } from "../layout/polar";
 
 const STADIUMS_URL =
@@ -35,6 +35,8 @@ type RawMatch = {
   team1: string;
   team2: string;
   score?: RawScore;
+  goals1?: Goal[];
+  goals2?: Goal[];
   ground?: string;
 };
 
@@ -221,6 +223,9 @@ export async function fetchWorldCupData(): Promise<{
     node.venue = raw.ground
       ? `${venueByCity.get(raw.ground) ?? raw.ground}, ${raw.ground}`
       : undefined;
+    if (raw.goals1?.length || raw.goals2?.length) {
+      node.goals = { home: raw.goals1 ?? [], away: raw.goals2 ?? [] };
+    }
 
     return node;
   }
