@@ -116,7 +116,7 @@ export function buildLayout(root: MatchNode): BracketLayout {
         angle,
         isHighlighted: false,
         isEliminated: false,
-        match: parentMatch,
+        match: parentMatch!,
       });
       return { angle, radius: TEAM_RADIUS };
     }
