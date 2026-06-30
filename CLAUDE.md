@@ -16,13 +16,13 @@ A radial, interactive World Cup bracket rendered in React + SVG. Teams are posit
 ```
 src/
   data/
-    bracket.ts          # The full bracket tree (source of truth)
-    teams.ts            # Team definitions: id, name, badge
+    fetchWorldCup.ts    # Fetches + transforms live openfootball/worldcup.json data (source of truth)
   types/
     index.ts            # Team, MatchNode, Round types
   layout/
     polar.ts            # polarToCartesian(), assignAngles(), buildLayout()
     constants.ts        # RADII per round, TOTAL_TEAMS, CENTER_X/Y, SVG_SIZE
+    match.ts            # ROUND_LABEL, resolveTeam(), formatScore() — shared by Bracket/MatchPanel/MatchListPanel
   components/
     Bracket/
       Bracket.tsx       # Root SVG container, renders all layers
@@ -38,9 +38,13 @@ src/
       Connector.module.css
     Trophy/
       Trophy.tsx        # Central trophy image at (CENTER_X, CENTER_Y)
+    MatchListPanel/
+      MatchListPanel.tsx # Side panel: round tabs + full match list per round
+      MatchListPanel.module.css
   hooks/
     useHoveredMatch.ts  # Track which match is hovered (for highlight)
     useBracketLayout.ts # Memoized layout computation from bracket data
+    useWorldCupData.ts  # Fetches live data on mount; loading/error/ready state
   App.tsx
   main.tsx
 ```
@@ -153,55 +157,26 @@ function cubicArc(from: Point, to: Point): string {
 
 Connectors are rendered **before** badges (lower z-order in SVG).
 
-## Data File Shape
+## Data Source
+
+There is no static bracket data file. All team, stadium, and match data is fetched live on app load from [openfootball/worldcup.json](https://github.com/openfootball/worldcup.json)'s 2026 dataset:
+
+- `worldcup.teams.json` — 48 teams (name, group, confederation, flag emoji, fifa_code)
+- `worldcup.stadiums.json` — stadium name/city, joined onto matches via `ground` (city) for `MatchNode.venue`
+- `worldcup.json` — **the source of truth.** All 104 matches (group stage + knockout). This is the only one that changes over time and is always re-fetched fresh, never cached statically. Knockout matches not yet decided reference future results as `"W74"`/`"L101"` (winner/loser of match `num` 74/101) instead of a team name.
+
+`src/data/fetchWorldCup.ts` exports `fetchWorldCupData()`, which fetches all three URLs in parallel and transforms the flat match list into the existing `MatchNode` tree shape by recursively resolving `team1`/`team2` strings — walking to the referenced match `num` when a `W`/`L` placeholder is found, building each match once (memoized by `num`), and reusing those same `MatchNode` objects in both the radial bracket tree and the per-round match list. Group-stage matches (`Matchday 1`–`17`) and the third-place match are not part of the rendered tree — only `Round of 32` through `Final` form the bracket.
 
 ```ts
-// data/teams.ts  — add teams here
-export const TEAMS: Record<string, Team> = {
-  FRA: {
-    id: "FRA",
-    name: "France",
-    shortName: "FRA",
-    badgeUrl: "/badges/fra.svg",
-  },
-  BRA: {
-    id: "BRA",
-    name: "Brazil",
-    shortName: "BRA",
-    badgeUrl: "/badges/bra.svg",
-  },
-  // ...
-};
-
-// data/bracket.ts  — edit results here
-export const BRACKET: MatchNode = {
-  id: "final",
-  round: "final",
-  winner: null,
-  home: {
-    id: "semi-1",
-    round: "semi",
-    winner: null,
-    home: {
-      /* quarter... */
-    },
-    away: {
-      /* quarter... */
-    },
-  },
-  away: {
-    id: "semi-2",
-    round: "semi",
-    winner: null,
-    home: {
-      /* ... */
-    },
-    away: {
-      /* ... */
-    },
-  },
-};
+// data/fetchWorldCup.ts
+export async function fetchWorldCupData(): Promise<{
+  bracket: MatchNode;                          // root = the Final, source of truth for the radial bracket
+  teams: Record<string, Team>;                 // keyed by fifa_code
+  matchesByRound: Record<Round, MatchNode[]>;  // for MatchListPanel's round tabs
+}>;
 ```
+
+`useWorldCupData()` (in `src/hooks/`) wraps this in a `loading` / `error` / `ready` state, fetched once on mount — no polling, no caching layer. To see updated results, reload the page.
 
 ## Rendering Layers (SVG draw order)
 
@@ -243,7 +218,8 @@ npm run lint      # eslint src/
 
 - **No D3.** All layout math is in `src/layout/`. If you need a utility (lerp, clamp, degreesToRad), add it to `layout/polar.ts`.
 - **SVG only, no Canvas.** All rendering is declarative React/SVG.
-- **Data is separate from layout.** `bracket.ts` holds results; `buildLayout()` computes positions. Never hardcode coordinates.
+- **Data is separate from layout.** `fetchWorldCup.ts` builds the `MatchNode` tree; `buildLayout()` computes positions. Never hardcode coordinates or bracket results.
 - **`buildLayout()` is pure.** It takes a `MatchNode` tree and returns a flat `Map`. No side effects, fully memoizable.
-- **Badge images go in `public/badges/`** as SVGs named by team ID (e.g. `fra.svg`). If a badge 404s, `<TeamBadge>` falls back to a colored circle with the team's `shortName`.
-- **48-team support is opt-in.** The `Round` type includes `"round48"` and `RADII` has an entry for it, but the default bracket data uses 32 teams. Switching to 48 only requires changing the data file and updating `TOTAL_ROUNDS`.
+- **No static bracket data file.** Do not reintroduce a hardcoded `bracket.ts`/`teams.ts` — `worldcup.json` is the single source of truth and must always be fetched fresh.
+- **Badge images go in `public/flags/`** as SVGs named by ISO 3166-1 alpha-2 country code (e.g. `fr.svg`), derived from each team's `flag_unicode` in `worldcup.teams.json`. If a badge 404s, `<TeamBadge>` falls back to a colored circle with the team's `shortName` — expected for teams without a local flag SVG yet.
+- **48-team support is opt-in.** The `Round` type includes `"round48"` and `RADII` has an entry for it, but the rendered bracket only covers the 32-team knockout stage (`round32` through `final`); the 48-team group stage feeds into it but isn't part of the radial tree.

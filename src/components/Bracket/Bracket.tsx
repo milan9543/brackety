@@ -7,17 +7,16 @@ import {
 import { useBracketLayout } from "../../hooks/useBracketLayout";
 import { TeamBadge } from "../TeamBadge/TeamBadge";
 import { Connector } from "../Connector/Connector";
-import { MatchPanel } from "../MatchPanel/MatchPanel";
 
 type Props = {
   bracket: MatchNode;
+  onSelectMatch: (match: MatchNode) => void;
 };
 
-export function Bracket({ bracket }: Props) {
+export function Bracket({ bracket, onSelectMatch }: Props) {
   const layout = useBracketLayout(bracket);
   const { flags, matches, edges, teamEdgeIds, advancedEdgeIds } = layout;
   const [hoveredTeamId, setHoveredTeamId] = useState<string | null>(null);
-  const [selectedMatch, setSelectedMatch] = useState<MatchNode | null>(null);
   const eliminatedTeamIds = new Set(
     flags.filter((f) => f.isEliminated).map((f) => f.teamId),
   );
@@ -28,7 +27,6 @@ export function Bracket({ bracket }: Props) {
   const cy = SVG_SIZE / 2;
 
   return (
-    <>
       <svg
         width={SVG_SIZE}
         height={SVG_SIZE}
@@ -77,7 +75,7 @@ export function Bracket({ bracket }: Props) {
             onHover={(entering) =>
               setHoveredTeamId(entering ? flag.teamId : null)
             }
-            onClick={() => setSelectedMatch(flag.match)}
+            onClick={() => onSelectMatch(flag.match)}
           />
         ))}
 
@@ -99,7 +97,7 @@ export function Bracket({ bracket }: Props) {
                 onHover={(entering) =>
                   setHoveredTeamId(entering ? entry.winner!.id : null)
                 }
-                onClick={() => setSelectedMatch(entry.matchAtRing)}
+                onClick={() => onSelectMatch(entry.matchAtRing)}
               />
             );
           }
@@ -143,19 +141,11 @@ export function Bracket({ bracket }: Props) {
               onHover={(entering) =>
                 setHoveredTeamId(entering ? entry.winner!.id : null)
               }
-              onClick={() => setSelectedMatch(entry.matchAtRing)}
+              onClick={() => onSelectMatch(entry.matchAtRing)}
             />
           );
         })}
 
       </svg>
-
-      {selectedMatch && (
-        <MatchPanel
-          match={selectedMatch}
-          onClose={() => setSelectedMatch(null)}
-        />
-      )}
-    </>
   );
 }

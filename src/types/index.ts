@@ -1,39 +1,4 @@
-const TEAM_IDS = [
-  "MEX",
-  "ZAF",
-  "SUI",
-  "CAN",
-  "BRA",
-  "MAR",
-  "USA",
-  "AUS",
-  "GER",
-  "CIV",
-  "NED",
-  "JPN",
-  "BEL",
-  "EGY",
-  "ESP",
-  "CPV",
-  "FRA",
-  "NOR",
-  "ARG",
-  "AUT",
-  "COL",
-  "POR",
-  "ENG",
-  "CRO",
-  "BIH",
-  "PAR",
-  "ECU",
-  "SWE",
-  "SEN",
-  "ALG",
-  "COD",
-  "GHA",
-] as const;
-
-export type TeamId = (typeof TEAM_IDS)[number];
+export type TeamId = string;
 
 export type Team = {
   id: TeamId;
@@ -41,6 +6,7 @@ export type Team = {
   shortName: string;
   badgeUrl: string;
   flagEmoji?: string;
+  group?: string;
 };
 
 export type Round =
