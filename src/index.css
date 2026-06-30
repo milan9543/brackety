@@ -1,0 +1,15 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #0d0d0d;
+}
+
+/* Noise texture via inline SVG data URI — no external file needed */
+@property --noise-opacity {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0.04;
+}

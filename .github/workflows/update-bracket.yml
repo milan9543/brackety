@@ -1,0 +1,67 @@
+name: Update Bracket Data
+
+on:
+  schedule:
+    # Every hour from June 28 – July 19 (UTC). GitHub Actions cron is UTC.
+    # Adjust if you want more or less frequent updates.
+    - cron: "0 * * * *"
+  workflow_dispatch: # allow manual runs
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  update-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Use a PAT so the commit triggers downstream workflows (e.g. Pages deploy).
+          # If you don't need that, remove token: and use the default GITHUB_TOKEN.
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Fetch latest results and update bracket.ts
+        env:
+          FOOTBALL_DATA_API_KEY: ${{ secrets.FOOTBALL_DATA_API_KEY }}
+        run: node scripts/update-bracket.mjs
+
+      - name: Commit updated bracket data (if changed)
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/data/bracket.ts
+          # Only commit if there's actually a change
+          git diff --cached --quiet || git commit -m "chore: update bracket results [skip ci]"
+          git push
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

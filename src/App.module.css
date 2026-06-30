@@ -1,0 +1,44 @@
+.app {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  overflow: auto;
+
+  /* Layered dark gradients: deep vignette + two subtle tinted radials */
+  background:
+    radial-gradient(
+      ellipse 80% 60% at 50% 50%,
+      rgba(20, 10, 40, 0.85) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 55% 45% at 25% 75%,
+      rgba(0, 20, 50, 0.5) 0%,
+      transparent 65%
+    ),
+    radial-gradient(
+      ellipse 60% 50% at 78% 20%,
+      rgba(30, 5, 20, 0.5) 0%,
+      transparent 60%
+    ),
+    #0a0a0f;
+
+  /* Film grain / noise overlay via SVG feTurbulence */
+  position: relative;
+  isolation: isolate;
+}
+
+.app::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+
+  /* SVG noise rendered as a CSS background */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  opacity: 1;
+  mix-blend-mode: overlay;
+}
