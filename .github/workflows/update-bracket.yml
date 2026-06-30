@@ -1,6 +1,8 @@
 name: Update Bracket Data
 
 on:
+  push:
+    branches: [main]
   schedule:
     # Every hour from June 28 – July 19 (UTC). GitHub Actions cron is UTC.
     # Adjust if you want more or less frequent updates.
