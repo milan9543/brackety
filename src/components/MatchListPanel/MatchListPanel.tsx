@@ -86,6 +86,11 @@ export function MatchListPanel({
           const isExpanded = selectedMatch?.id === match.id;
           const isNext = nextMatch?.id === match.id;
           const winnerId = match.winner?.id ?? null;
+          const isInProgress =
+            !match.score &&
+            !isNext &&
+            !!match.utcDate &&
+            new Date(match.utcDate).getTime() < Date.now();
 
           return (
             <div key={match.id}>
@@ -95,7 +100,9 @@ export function MatchListPanel({
                     ? "bg-white/8"
                     : isNext
                       ? "bg-[#f5c518]/8 hover:bg-[#f5c518]/12"
-                      : "hover:bg-white/6"
+                      : isInProgress
+                        ? "bg-red-500/6 hover:bg-red-500/10"
+                        : "hover:bg-white/6"
                 }`}
                 onClick={() => onSelectMatch(isExpanded ? null : match)}
               >
@@ -119,6 +126,10 @@ export function MatchListPanel({
                     {isNext ? (
                       <span className="rounded-sm bg-[#f5c518] px-1 py-0.5 text-[9px] font-bold tracking-[0.06em] text-[#0d0d0d] uppercase">
                         Next
+                      </span>
+                    ) : isInProgress ? (
+                      <span className="rounded-sm bg-red-500/80 px-1 py-0.5 text-[9px] font-bold tracking-[0.06em] text-white uppercase">
+                        Live
                       </span>
                     ) : score ? (
                       score.main
