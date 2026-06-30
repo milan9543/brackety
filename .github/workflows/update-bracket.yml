@@ -4,9 +4,15 @@ on:
   push:
     branches: [main]
   schedule:
-    # Every hour from June 28 – July 19 (UTC). GitHub Actions cron is UTC.
-    # Adjust if you want more or less frequent updates.
-    - cron: "0 * * * *"
+    # Run ~3h after each possible kick-off time (UTC) so results are in
+    # even after extra time + penalty shootout (~2h45m worst case).
+    # 04:00 covers 01:00 KO; 04:30 covers 01:30 KO; 06:00 covers 03:00 KO.
+    # 19:00–00:00 cover the 16:00–21:00 KO cluster.
+    # 01:00 covers 22:00 KO; 02:30 covers 23:00 KO.
+    - cron: "0 4,6,19,20,21,22,23 * * *"
+    - cron: "30 4 * * *"
+    - cron: "0 0,1 * * *"
+    - cron: "30 2 * * *"
   workflow_dispatch: # allow manual runs
 
 permissions:
