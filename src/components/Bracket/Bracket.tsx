@@ -117,7 +117,7 @@ export function Bracket({ bracket }: Props) {
           fill="url(#trophy-shadow)"
         />
         <image
-          href="/trophy.webp"
+          href={`${import.meta.env.BASE_URL}trophy.webp`}
           x={cx - 80}
           y={cy - 80}
           width={160}

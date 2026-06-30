@@ -89,7 +89,7 @@ export function TeamBadge({
       ) : (
         <image
           ref={imageRef}
-          href={team.badgeUrl}
+          href={`${import.meta.env.BASE_URL}${team.badgeUrl.replace(/^\//, "")}`}
           x={cx - radius}
           y={cy - radius}
           width={radius * 2}
