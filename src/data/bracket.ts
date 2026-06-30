@@ -14,7 +14,7 @@ const m73: MatchNode = {
   winner: TEAMS.CAN,
   score: { home: 0, away: 1 },
   utcDate: "2026-06-28T19:00:00Z",
-  venue: "Estadio Akron, Guadalajara",
+  venue: "SoFi Stadium, Inglewood",
 };
 
 const m75: MatchNode = {
@@ -23,9 +23,9 @@ const m75: MatchNode = {
   home: TEAMS.NED,
   away: TEAMS.MAR,
   winner: TEAMS.MAR,
-  score: { home: 3, away: 4, extraTime: true, homePens: 2, awayPens: 3 },
+  score: { home: 1, away: 1, extraTime: true, homePens: 2, awayPens: 3 },
   utcDate: "2026-06-30T01:00:00Z",
-  venue: "MetLife Stadium, East Rutherford",
+  venue: "Estadio BBVA, Guadalupe",
 };
 
 const m74: MatchNode = {
@@ -34,9 +34,9 @@ const m74: MatchNode = {
   home: TEAMS.GER,
   away: TEAMS.PAR,
   winner: TEAMS.PAR,
-  score: { home: 4, away: 5, extraTime: true, homePens: 3, awayPens: 4 },
+  score: { home: 1, away: 1, extraTime: true, homePens: 3, awayPens: 4 },
   utcDate: "2026-06-29T20:30:00Z",
-  venue: "SoFi Stadium, Los Angeles",
+  venue: "Gillette Stadium, Foxborough",
 };
 
 const m77: MatchNode = {
@@ -47,7 +47,7 @@ const m77: MatchNode = {
   winner: null,
   score: null,
   utcDate: "2026-06-30T21:00:00Z",
-  venue: undefined,
+  venue: "MetLife Stadium, East Rutherford",
 };
 
 const m76: MatchNode = {
@@ -58,7 +58,7 @@ const m76: MatchNode = {
   winner: TEAMS.BRA,
   score: { home: 2, away: 1 },
   utcDate: "2026-06-29T17:00:00Z",
-  venue: "AT&T Stadium, Dallas",
+  venue: "NRG Stadium, Houston",
 };
 
 const m78: MatchNode = {
@@ -69,7 +69,7 @@ const m78: MatchNode = {
   winner: null,
   score: null,
   utcDate: "2026-06-30T17:00:00Z",
-  venue: undefined,
+  venue: "AT&T Stadium, Arlington",
 };
 
 const m79: MatchNode = {
@@ -80,7 +80,7 @@ const m79: MatchNode = {
   winner: null,
   score: null,
   utcDate: "2026-07-01T01:00:00Z",
-  venue: undefined,
+  venue: "Estadio Azteca, Mexico City",
 };
 
 const m80: MatchNode = {
@@ -91,7 +91,7 @@ const m80: MatchNode = {
   winner: null,
   score: null,
   utcDate: "2026-07-01T16:00:00Z",
-  venue: undefined,
+  venue: "Mercedes-Benz Stadium, Atlanta",
 };
 
 // Right half of bracket (feeds semi m102)
@@ -104,7 +104,7 @@ const m81: MatchNode = {
   winner: null,
   score: null,
   utcDate: "2026-07-02T00:00:00Z",
-  venue: undefined,
+  venue: "Levi's Stadium, Santa Clara",
 };
 
 const m82: MatchNode = {
@@ -115,7 +115,7 @@ const m82: MatchNode = {
   winner: null,
   score: null,
   utcDate: "2026-07-01T20:00:00Z",
-  venue: undefined,
+  venue: "Lumen Field, Seattle",
 };
 
 const m83: MatchNode = {
@@ -126,7 +126,7 @@ const m83: MatchNode = {
   winner: null,
   score: null,
   utcDate: "2026-07-02T23:00:00Z",
-  venue: undefined,
+  venue: "BMO Field, Toronto",
 };
 
 const m84: MatchNode = {
@@ -137,7 +137,7 @@ const m84: MatchNode = {
   winner: null,
   score: null,
   utcDate: "2026-07-02T19:00:00Z",
-  venue: undefined,
+  venue: "SoFi Stadium, Inglewood",
 };
 
 const m85: MatchNode = {
@@ -148,7 +148,7 @@ const m85: MatchNode = {
   winner: null,
   score: null,
   utcDate: "2026-07-04T01:30:00Z",
-  venue: undefined,
+  venue: "Arrowhead Stadium, Kansas City",
 };
 
 const m86: MatchNode = {
@@ -159,7 +159,7 @@ const m86: MatchNode = {
   winner: null,
   score: null,
   utcDate: "2026-07-03T03:00:00Z",
-  venue: undefined,
+  venue: "BC Place, Vancouver",
 };
 
 const m87: MatchNode = {
@@ -170,7 +170,7 @@ const m87: MatchNode = {
   winner: null,
   score: null,
   utcDate: "2026-07-03T22:00:00Z",
-  venue: undefined,
+  venue: "Hard Rock Stadium, Miami Gardens",
 };
 
 const m88: MatchNode = {
@@ -181,7 +181,7 @@ const m88: MatchNode = {
   winner: null,
   score: null,
   utcDate: "2026-07-03T18:00:00Z",
-  venue: undefined,
+  venue: "AT&T Stadium, Arlington",
 };
 
 // ─── Round of 16 ─────────────────────────────────────────────────────────────
@@ -196,7 +196,7 @@ const m89: MatchNode = {
   winner: null,
   score: null,
   utcDate: "2026-07-04T21:00:00Z",
-  venue: undefined,
+  venue: "Lincoln Financial Field, Philadelphia",
 };
 
 const m90: MatchNode = {
@@ -207,7 +207,7 @@ const m90: MatchNode = {
   winner: null,
   score: null,
   utcDate: "2026-07-04T17:00:00Z",
-  venue: undefined,
+  venue: "NRG Stadium, Houston",
 };
 
 const m91: MatchNode = {
@@ -218,7 +218,7 @@ const m91: MatchNode = {
   winner: null,
   score: null,
   utcDate: "2026-07-05T20:00:00Z",
-  venue: undefined,
+  venue: "MetLife Stadium, East Rutherford",
 };
 
 const m92: MatchNode = {
@@ -229,7 +229,7 @@ const m92: MatchNode = {
   winner: null,
   score: null,
   utcDate: "2026-07-06T00:00:00Z",
-  venue: undefined,
+  venue: "Estadio Azteca, Mexico City",
 };
 
 // Right half
@@ -241,7 +241,7 @@ const m93: MatchNode = {
   winner: null,
   score: null,
   utcDate: "2026-07-06T19:00:00Z",
-  venue: undefined,
+  venue: "AT&T Stadium, Arlington",
 };
 
 const m94: MatchNode = {
@@ -252,7 +252,7 @@ const m94: MatchNode = {
   winner: null,
   score: null,
   utcDate: "2026-07-07T00:00:00Z",
-  venue: undefined,
+  venue: "Lumen Field, Seattle",
 };
 
 const m95: MatchNode = {
@@ -263,7 +263,7 @@ const m95: MatchNode = {
   winner: null,
   score: null,
   utcDate: "2026-07-07T16:00:00Z",
-  venue: undefined,
+  venue: "Mercedes-Benz Stadium, Atlanta",
 };
 
 const m96: MatchNode = {
@@ -274,7 +274,7 @@ const m96: MatchNode = {
   winner: null,
   score: null,
   utcDate: "2026-07-07T20:00:00Z",
-  venue: undefined,
+  venue: "BC Place, Vancouver",
 };
 
 // ─── Quarterfinals ────────────────────────────────────────────────────────────
@@ -288,7 +288,7 @@ const m97: MatchNode = {
   winner: null,
   score: null,
   utcDate: "2026-07-09T20:00:00Z",
-  venue: undefined,
+  venue: "Gillette Stadium, Foxborough",
 };
 
 const m98: MatchNode = {
@@ -299,7 +299,7 @@ const m98: MatchNode = {
   winner: null,
   score: null,
   utcDate: "2026-07-10T19:00:00Z",
-  venue: undefined,
+  venue: "SoFi Stadium, Inglewood",
 };
 
 const m99: MatchNode = {
@@ -310,7 +310,7 @@ const m99: MatchNode = {
   winner: null,
   score: null,
   utcDate: "2026-07-11T21:00:00Z",
-  venue: undefined,
+  venue: "Hard Rock Stadium, Miami Gardens",
 };
 
 const m100: MatchNode = {
@@ -321,7 +321,7 @@ const m100: MatchNode = {
   winner: null,
   score: null,
   utcDate: "2026-07-12T01:00:00Z",
-  venue: undefined,
+  venue: "Arrowhead Stadium, Kansas City",
 };
 
 // ─── Semifinals ───────────────────────────────────────────────────────────────
@@ -335,7 +335,7 @@ const m101: MatchNode = {
   winner: null,
   score: null,
   utcDate: "2026-07-14T19:00:00Z",
-  venue: undefined,
+  venue: "AT&T Stadium, Arlington",
 };
 
 const m102: MatchNode = {
@@ -346,7 +346,7 @@ const m102: MatchNode = {
   winner: null,
   score: null,
   utcDate: "2026-07-15T19:00:00Z",
-  venue: undefined,
+  venue: "Mercedes-Benz Stadium, Atlanta",
 };
 
 // ─── Final ────────────────────────────────────────────────────────────────────
