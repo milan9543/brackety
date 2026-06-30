@@ -82,7 +82,7 @@ export function Bracket({ bracket }: Props) {
         ))}
 
         {/* Inner rings: winner badge (or TBD dot) at each match node */}
-        {matches.map((entry) => {
+        {matches.filter((e) => e.matchId !== "final").map((entry) => {
           const { x, y } = entry.position;
           if (entry.winner) {
             return (
@@ -108,7 +108,7 @@ export function Bracket({ bracket }: Props) {
           );
         })}
 
-        {/* Trophy — top layer */}
+        {/* Trophy — behind winner flag */}
         <ellipse
           cx={cx}
           cy={cy + 72}
@@ -125,6 +125,29 @@ export function Bracket({ bracket }: Props) {
           preserveAspectRatio="xMidYMid meet"
           style={{ pointerEvents: "none" }}
         />
+
+        {/* Final winner badge — on top of trophy */}
+        {matches.filter((e) => e.matchId === "final").map((entry) => {
+          if (!entry.winner) return null;
+          return (
+            <TeamBadge
+              key={entry.matchId}
+              team={entry.winner}
+              cx={entry.position.x}
+              cy={entry.position.y}
+              radius={BADGE_RADIUS}
+              isHighlighted={
+                !hoveredIsEliminated && hoveredTeamId === entry.winner.id
+              }
+              isEliminated={false}
+              onHover={(entering) =>
+                setHoveredTeamId(entering ? entry.winner!.id : null)
+              }
+              onClick={() => setSelectedMatch(entry.matchAtRing)}
+            />
+          );
+        })}
+
       </svg>
 
       {selectedMatch && (
