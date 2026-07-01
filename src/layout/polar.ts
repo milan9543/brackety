@@ -56,6 +56,14 @@ export type Edge = {
   spoke: { degree: number; fromRadius: number; toRadius: number };
 };
 
+export type ChampionEntry = {
+  team: Team;
+  // finalist position the champion advanced from (start of the connector line)
+  fromPosition: Point;
+  // fixed display position above the trophy
+  position: Point;
+};
+
 export type BracketLayout = {
   flags: FlagEntry[];
   matches: MatchEntry[];
@@ -64,6 +72,7 @@ export type BracketLayout = {
   teamEdgeIds: Map<string, Set<string>>;
   // edge IDs where the winner has actually advanced (result confirmed)
   advancedEdgeIds: Set<string>;
+  champion: ChampionEntry | null;
 };
 
 const ROUND_TO_DEPTH: Record<string, number> = {
@@ -138,7 +147,9 @@ export function buildLayout(root: MatchNode): BracketLayout {
 
     const angle = (home.angle + away.angle) / 2;
     const depth = ROUND_TO_DEPTH[node.round] ?? 4;
-    // winner of this match advances to the next inward ring
+    // winner of this match advances to the next inward ring; all rings are
+    // evenly spaced (RADII), so the semi-final ring (radius 100) is the
+    // first ring out from center.
     const radius = RADII[depth - 1] ?? RADII[0];
 
     matches.push({
@@ -174,35 +185,51 @@ export function buildLayout(root: MatchNode): BracketLayout {
   const home = walk(root.home, 180, 360, totalLeaves, root);
   const away = walk(root.away, 0, 180, totalLeaves, root);
 
-  // root (final) sits at center
+  // root (final) has no ring of its own — both finalists are already drawn
+  // by the semi-final entries above (their winner badge sits at the finalist
+  // slot, RADII[1]/2, on their own home/away side). The trophy occupies dead
+  // center, so the final match node itself gets no badge.
+  const finalAngle = (home.angle + away.angle) / 2;
   matches.push({
     matchId: root.id,
     match: root,
     matchAtRing: root,
     winner: root.winner,
     position: CENTER,
-    angle: 270,
+    angle: finalAngle,
     depth: 0,
   });
 
+  // The final pairing is shown as an arc between the two finalist positions,
+  // meeting at their angular midpoint; no radial spoke down to center, since
+  // no badge sits there (trophy occupies it).
   edges.push(
-    makeEdge(`${root.id}-home`, home.angle, home.radius, 270, 0),
-    makeEdge(`${root.id}-away`, away.angle, away.radius, 270, 0),
+    makeEdge(`${root.id}-home`, home.angle, home.radius, finalAngle, home.radius),
+    makeEdge(`${root.id}-away`, away.angle, away.radius, finalAngle, away.radius),
   );
   addEdgeToSubtree(root.home, `${root.id}-home`);
   addEdgeToSubtree(root.away, `${root.id}-away`);
 
+  let champion: ChampionEntry | null = null;
   if (root.winner) {
     const winnerInHome = isTeamInSubtree(root.home, root.winner.id);
     collectLeafTeamIds(winnerInHome ? root.away : root.home, eliminatedTeamIds);
     advancedEdgeIds.add(winnerInHome ? `${root.id}-home` : `${root.id}-away`);
+
+    // champion badge sits straight up (12 o'clock), between the semi-final
+    // ring and the quarter-final ring, closer to center
+    champion = {
+      team: root.winner,
+      fromPosition: CENTER,
+      position: polarToCartesian(0, RADII[1] + (RADII[2] - RADII[1]) * 0.3),
+    };
   }
 
   for (const flag of flags) {
     flag.isEliminated = eliminatedTeamIds.has(flag.teamId);
   }
 
-  return { flags, matches, edges, teamEdgeIds, advancedEdgeIds };
+  return { flags, matches, edges, teamEdgeIds, advancedEdgeIds, champion };
 }
 
 function isTeamInSubtree(node: MatchNode | Team, teamId: string): boolean {

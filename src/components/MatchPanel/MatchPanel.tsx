@@ -32,7 +32,9 @@ export function MatchPanel({ match, onClose }: Props) {
       className="fixed top-1/2 right-8 z-100 w-65 -translate-y-1/2 rounded-xl border border-white/10
         bg-[#0f0f16]/95 p-5 pb-4.5 font-sans text-white shadow-[0_8px_32px_rgba(0,0,0,0.6),0_0_0_1px_rgba(245,197,24,0.08)]
         backdrop-blur-md [animation:slide-in_0.18s_ease]
-        max-[600px]:right-1/2 max-[600px]:translate-x-1/2"
+        max-[600px]:top-auto max-[600px]:right-0 max-[600px]:bottom-0 max-[600px]:left-0
+        max-[600px]:w-full max-[600px]:translate-x-0 max-[600px]:translate-y-0
+        max-[600px]:rounded-b-none"
     >
       <button
         className="absolute top-2.5 right-3 rounded px-1 py-0.5 text-[13px] leading-none text-white/40 transition-colors hover:text-white/90"

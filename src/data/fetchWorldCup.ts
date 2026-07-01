@@ -6,6 +6,24 @@ import teamsData from "./worldcup.teams.json";
 const MATCHES_URL =
   "https://raw.githubusercontent.com/openfootball/worldcup.json/refs/heads/master/2026/worldcup.json";
 
+// Testing aid: randomly resolves any match that hasn't been played yet, so the
+// full bracket (through to a champion) can be exercised in the UI ahead of
+// real results. Never enable this outside local testing.
+const SIMULATE_REMAINING_MATCHES = false;
+
+function simulateScore(): RawScore {
+  const home = Math.floor(Math.random() * 4);
+  const away = Math.floor(Math.random() * 4);
+  if (home !== away) return { ft: [home, away] };
+  // draw in a knockout match: settle it on penalties, loser always one behind
+  const penLoser = Math.floor(Math.random() * 5);
+  const penWinner = penLoser + 1;
+  const homeWins = Math.random() < 0.5;
+  return {
+    ft: [home, away],
+    p: homeWins ? [penWinner, penLoser] : [penLoser, penWinner],
+  };
+}
 
 type RawTeam = {
   name: string;
@@ -67,7 +85,9 @@ function flagUnicodeToIsoCode(flagUnicode: string): string | null {
     parseInt(m[0], 16),
   );
   if (codepoints.length !== 2) return null;
-  const letters = codepoints.map((cp) => String.fromCharCode(cp - 0x1f1e6 + 65));
+  const letters = codepoints.map((cp) =>
+    String.fromCharCode(cp - 0x1f1e6 + 65),
+  );
   return letters.join("");
 }
 
@@ -83,7 +103,11 @@ function buildTeam(raw: RawTeam): Team {
   };
 }
 
-function computeWinner(home: Team | null, away: Team | null, score?: RawScore): Team | null {
+function computeWinner(
+  home: Team | null,
+  away: Team | null,
+  score?: RawScore,
+): Team | null {
   if (!home || !away || !score) return null;
   const shootout = score.p;
   if (shootout) {
@@ -117,7 +141,9 @@ function toUtcDate(date?: string, time?: string): string | undefined {
   const offsetHours = Number(offsetMatch[1]);
   const sign = offsetHours >= 0 ? "+" : "-";
   const pad = (n: number) => String(Math.abs(n)).padStart(2, "0");
-  return new Date(`${date}T${hhmm}:00${sign}${pad(offsetHours)}:00`).toISOString();
+  return new Date(
+    `${date}T${hhmm}:00${sign}${pad(offsetHours)}:00`,
+  ).toISOString();
 }
 
 export async function fetchWorldCupData(): Promise<{
@@ -125,7 +151,9 @@ export async function fetchWorldCupData(): Promise<{
   teams: Record<string, Team>;
   matchesByRound: Record<Round, MatchNode[]>;
 }> {
-  const matchesData: { matches: RawMatch[] } = await fetch(MATCHES_URL).then((r) => r.json());
+  const matchesData: { matches: RawMatch[] } = await fetch(MATCHES_URL).then(
+    (r) => r.json(),
+  );
   const rawTeams: RawTeam[] = teamsData as RawTeam[];
 
   const teams: Record<string, Team> = {};
@@ -204,8 +232,13 @@ export async function fetchWorldCupData(): Promise<{
     const homeTeam = isTeam(node.home) ? node.home : node.home.winner;
     const awayTeam = isTeam(node.away) ? node.away : node.away.winner;
 
-    node.winner = computeWinner(homeTeam, awayTeam, raw.score);
-    node.score = toScore(raw.score);
+    const score =
+      !raw.score && SIMULATE_REMAINING_MATCHES && homeTeam && awayTeam
+        ? simulateScore()
+        : raw.score;
+
+    node.winner = computeWinner(homeTeam, awayTeam, score);
+    node.score = toScore(score);
     node.utcDate = toUtcDate(raw.date, raw.time);
     node.venue = raw.ground
       ? `${venueByCity.get(raw.ground) ?? raw.ground}, ${raw.ground}`

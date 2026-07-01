@@ -60,9 +60,11 @@ export function MatchListPanel({
 
   return (
     <div
-      className="flex w-full max-h-none flex-col overflow-hidden md:rounded-xl rounded-t-xl border border-white/10
+      className="fixed bottom-0 left-0 z-50 flex max-h-[45vh] w-full flex-col overflow-hidden
+        rounded-t-xl border border-white/10
         bg-[#0f0f16]/95 font-sans text-white shadow-[0_8px_32px_rgba(0,0,0,0.6),0_0_0_1px_rgba(245,197,24,0.08)]
-        backdrop-blur-md md:w-80 md:max-h-[80vh]"
+        backdrop-blur-md
+        md:static md:z-auto md:w-80 md:max-h-[80vh] md:rounded-xl"
     >
       <div className="flex flex-wrap gap-1 border-b border-white/8 p-3">
         {KNOCKOUT_ROUNDS.map((round) => (

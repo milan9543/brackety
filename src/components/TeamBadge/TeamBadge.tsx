@@ -60,7 +60,14 @@ export function TeamBadge({
         </clipPath>
         {isEliminated && (
           <filter id={filterId} x="-10%" y="-10%" width="120%" height="120%">
-            <feColorMatrix type="saturate" values="0.25" />
+            <feColorMatrix type="saturate" values="0.2" />
+            <feColorMatrix
+              type="matrix"
+              values="0.35 0 0 0 0
+                      0 0.35 0 0 0
+                      0 0 0.35 0 0
+                      0 0 0 1 0"
+            />
           </filter>
         )}
       </defs>

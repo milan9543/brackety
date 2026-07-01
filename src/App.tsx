@@ -22,7 +22,7 @@ function findNextMatch(
 }
 
 const APP_SHELL_CLASS =
-  "app-noise-overlay relative isolate flex min-h-screen items-start justify-center overflow-auto pt-6 md:items-center md:py-6 " +
+  "app-noise-overlay relative isolate flex min-h-screen items-start justify-center overflow-auto pt-2 pb-2 md:items-center md:py-6 " +
   "bg-[#0a0a0f] bg-[radial-gradient(ellipse_80%_60%_at_50%_50%,rgba(20,10,40,0.85)_0%,transparent_70%),radial-gradient(ellipse_55%_45%_at_25%_75%,rgba(0,20,50,0.5)_0%,transparent_65%),radial-gradient(ellipse_60%_50%_at_78%_20%,rgba(30,5,20,0.5)_0%,transparent_60%)]";
 
 export function App() {
