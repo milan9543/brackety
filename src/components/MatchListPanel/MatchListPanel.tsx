@@ -6,6 +6,7 @@ import {
   resolveTeam,
   formatScore,
 } from "../../layout/match";
+import { FlagImg } from "../FlagImg/FlagImg";
 
 type Props = {
   matchesByRound: Record<Round, MatchNode[]>;
@@ -51,7 +52,11 @@ export function MatchListPanel({
     }
   }, [selectedMatch]);
 
-  const matches = matchesByRound[selectedRound];
+  const matches = [...matchesByRound[selectedRound]].sort((a, b) => {
+    if (!a.utcDate) return 1;
+    if (!b.utcDate) return -1;
+    return new Date(a.utcDate).getTime() - new Date(b.utcDate).getTime();
+  });
 
   return (
     <div
@@ -86,11 +91,21 @@ export function MatchListPanel({
           const isExpanded = selectedMatch?.id === match.id;
           const isNext = nextMatch?.id === match.id;
           const winnerId = match.winner?.id ?? null;
+          const kickoff = match.utcDate
+            ? new Date(match.utcDate).getTime()
+            : null;
+          const elapsed = kickoff ? Date.now() - kickoff : null;
           const isInProgress =
             !match.score &&
             !isNext &&
-            !!match.utcDate &&
-            new Date(match.utcDate).getTime() < Date.now();
+            elapsed !== null &&
+            elapsed > 0 &&
+            elapsed < 2.5 * 60 * 60 * 1000;
+          const isEnded =
+            !match.score &&
+            !isNext &&
+            elapsed !== null &&
+            elapsed >= 2.5 * 60 * 60 * 1000;
 
           return (
             <div key={match.id}>
@@ -102,20 +117,22 @@ export function MatchListPanel({
                       ? "bg-[#f5c518]/8 hover:bg-[#f5c518]/12"
                       : isInProgress
                         ? "bg-red-500/6 hover:bg-red-500/10"
-                        : "hover:bg-white/6"
+                        : isEnded
+                          ? "hover:bg-white/6"
+                          : "hover:bg-white/6"
                 }`}
                 onClick={() => onSelectMatch(isExpanded ? null : match)}
               >
                 <span className="flex w-full items-center gap-2">
                   <span className="flex min-w-0 flex-1 items-center gap-1.5">
-                    <span className="shrink-0 text-base leading-none">
-                      {home?.flagEmoji ?? ""}
-                    </span>
+                    <FlagImg team={home ?? null} size={18} />
                     <span
                       className={`overflow-hidden text-[11.5px] text-ellipsis whitespace-nowrap ${
                         winnerId === home?.id
                           ? "font-bold text-white"
-                          : "font-medium text-white/85"
+                          : winnerId && winnerId !== home?.id
+                            ? "font-light text-white/50"
+                            : "font-light text-white/85"
                       }`}
                     >
                       {home?.name ?? "TBD"}
@@ -131,6 +148,10 @@ export function MatchListPanel({
                       <span className="rounded-sm bg-red-500/80 px-1 py-0.5 text-[9px] font-bold tracking-[0.06em] text-white uppercase">
                         Live
                       </span>
+                    ) : isEnded ? (
+                      <span className="rounded-sm bg-white/10 px-1 py-0.5 text-[9px] font-bold tracking-[0.06em] text-white/40 uppercase">
+                        Ended
+                      </span>
                     ) : score ? (
                       score.main
                     ) : (
@@ -139,22 +160,22 @@ export function MatchListPanel({
                   </span>
 
                   <span className="flex min-w-0 flex-1 flex-row-reverse items-center gap-1.5 text-right">
+                    <FlagImg team={away ?? null} size={18} />
                     <span
                       className={`overflow-hidden text-[11.5px] text-ellipsis whitespace-nowrap ${
                         winnerId === away?.id
                           ? "font-bold text-white"
-                          : "font-medium text-white/85"
+                          : winnerId && winnerId !== away?.id
+                            ? "font-medium text-white/35"
+                            : "font-medium text-white/85"
                       }`}
                     >
                       {away?.name ?? "TBD"}
                     </span>
-                    <span className="shrink-0 text-base leading-none">
-                      {away?.flagEmoji ?? ""}
-                    </span>
                   </span>
                 </span>
                 {isNext && match.utcDate && (
-                  <span className="mt-1 text-[10px] text-[#f5c518]/60">
+                  <span className="mt-1 w-full text-center text-[10px] text-[#f5c518]/60">
                     {formatDate(match.utcDate)}
                   </span>
                 )}
@@ -170,9 +191,7 @@ export function MatchListPanel({
                           : "opacity-100"
                       }`}
                     >
-                      <span className="text-[28px] leading-none">
-                        {home?.flagEmoji ?? ""}
-                      </span>
+                      <FlagImg team={home ?? null} size={36} />
                       <span
                         className={`text-center text-[11px] tracking-[0.02em] ${
                           winnerId === home?.id
@@ -210,9 +229,7 @@ export function MatchListPanel({
                           : "opacity-100"
                       }`}
                     >
-                      <span className="text-[28px] leading-none">
-                        {away?.flagEmoji ?? ""}
-                      </span>
+                      <FlagImg team={away ?? null} size={36} />
                       <span
                         className={`text-center text-[11px] tracking-[0.02em] ${
                           winnerId === away?.id
@@ -249,12 +266,12 @@ export function MatchListPanel({
                     )}
 
                   {match.utcDate && (
-                    <div className="mt-1 text-[10px] leading-snug text-white/35">
+                    <div className="mt-1 text-center text-[10px] leading-snug text-white/35">
                       {formatDate(match.utcDate)}
                     </div>
                   )}
                   {match.venue && (
-                    <div className="mt-1 text-[10px] leading-snug text-white/35">
+                    <div className="mt-1 text-center text-[10px] leading-snug text-white/35">
                       {match.venue}
                     </div>
                   )}

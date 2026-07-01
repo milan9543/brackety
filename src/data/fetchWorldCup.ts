@@ -1,17 +1,11 @@
 import type { Goal, MatchNode, Round, Score, Team } from "../types";
 import { isTeam } from "../layout/polar";
+import stadiumsData from "./worldcup.stadiums.json";
+import teamsData from "./worldcup.teams.json";
 
-const STADIUMS_URL =
-  "https://raw.githubusercontent.com/openfootball/worldcup.json/refs/heads/master/2026/worldcup.stadiums.json";
-const TEAMS_URL =
-  "https://raw.githubusercontent.com/openfootball/worldcup.json/refs/heads/master/2026/worldcup.teams.json";
 const MATCHES_URL =
   "https://raw.githubusercontent.com/openfootball/worldcup.json/refs/heads/master/2026/worldcup.json";
 
-type RawStadium = {
-  city: string;
-  name: string;
-};
 
 type RawTeam = {
   name: string;
@@ -131,15 +125,8 @@ export async function fetchWorldCupData(): Promise<{
   teams: Record<string, Team>;
   matchesByRound: Record<Round, MatchNode[]>;
 }> {
-  const [stadiumsRes, teamsRes, matchesRes] = await Promise.all([
-    fetch(STADIUMS_URL),
-    fetch(TEAMS_URL),
-    fetch(MATCHES_URL),
-  ]);
-
-  const stadiumsData: { stadiums: RawStadium[] } = await stadiumsRes.json();
-  const rawTeams: RawTeam[] = await teamsRes.json();
-  const matchesData: { matches: RawMatch[] } = await matchesRes.json();
+  const matchesData: { matches: RawMatch[] } = await fetch(MATCHES_URL).then((r) => r.json());
+  const rawTeams: RawTeam[] = teamsData as RawTeam[];
 
   const teams: Record<string, Team> = {};
   const teamsByName = new Map<string, Team>();
